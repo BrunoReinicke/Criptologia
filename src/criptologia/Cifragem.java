@@ -4,43 +4,25 @@
  */
 package criptologia;
 
-import java.util.ArrayList;
-
 /**
  * @author Bruno Reinicke
  */
 public class Cifragem {
     
-    public String encryptAfim(String senha) {
-        senha = this.encrypt(senha);
-        String crypto = "Üúùø÷öõôóòñðïîíìëêéèçæåäãâáàßÞÝÛÚÙØ×ÖÕÔÓÒÑÐÏÎÍÌËÊÉÈÇÆÅÄÃÂÁÀ¿¾½¼»º¹¸·¶µ´³²±°¯®­¬«ª©¨§¦¥¤£¡";
-        String cifra = "";
-        ArrayList<Integer> aux = new ArrayList<>();
-        
-        for (int i = 0; i < senha.length(); i++) 
-            aux.add(crypto.indexOf(senha.charAt(i)));
-        for (int j = 0; j < aux.size(); j++) 
-            cifra += crypto.charAt((12 * aux.get(j) + 14) % crypto.length()); 
-        return cifra;
+    public String encryptAfim(String crypto, int index) {
+       return String.valueOf(crypto.charAt((12 * index + 14) % crypto.length()));
     }
     
-    public String decryptAfim(String cifra) {
-        String crypto = "Üúùø÷öõôóòñðïîíìëêéèçæåäãâáàßÞÝÛÚÙØ×ÖÕÔÓÒÑÐÏÎÍÌËÊÉÈÇÆÅÄÃÂÁÀ¿¾½¼»º¹¸·¶µ´³²±°¯®­¬«ª©¨§¦¥¤£¡";
-        String senha = "";
+    public String decryptAfim(String caract, int index) {
         int inv = 0;
-        int length = crypto.length();
+        int length = caract.length();
         
-        for (int x = 1; x < crypto.length(); x++) 
-            if ((12 * x) % crypto.length() == 1) 
+        for (int x = length; x >= 0; x--) 
+            if ((12 * x) % length == 1) { 
                 inv = x;
-
-        for (int i = 0; i < cifra.length(); i++) {
-            int indice = crypto.indexOf(cifra.charAt(i));
-            if (indice == -1) continue;
-            int  y = (inv * ((indice - 14 + length) % length)) % length;
-            senha += crypto.charAt(y) + "";
-        }
-        return this.decrypt(senha);
+                break;
+            }
+        return String.valueOf(caract.charAt((inv * ((index - 14 + length) % length)) % length));
     }
     
     public String encrypt(String senha) {
@@ -51,7 +33,7 @@ public class Cifragem {
         for (int z = 0; z < senha.length(); z++) 
             for (int x = 0; x < caract.length(); x++) {
                 if ((caract.charAt(x)+"").equals(senha.charAt(z)+"")) {
-                    cipher = cipher + crypto.charAt(x); 
+                    cipher += this.encryptAfim(crypto, crypto.indexOf(crypto.charAt(x))); 
                     break;
                 }
                 if (senha.length() == cipher.length())
@@ -68,7 +50,7 @@ public class Cifragem {
         for (int z = 0; z < cipher.length(); z++) 
             for (int x = 0; x < crypto.length(); x++) {
                 if ((crypto.charAt(x)+"").equals(cipher.charAt(z)+"")) {
-                    senha += caract.charAt(x); 
+                    senha += this.decryptAfim(caract, caract.indexOf(caract.charAt(x))); 
                     break;
                 }
                 if (senha.length() == cipher.length())

@@ -28,7 +28,7 @@ public class Arquivo {
             while (line != null) {
                 line = reader.readLine();
                 if (line != null) 
-                    this.SaveToFile(new Cifragem().decryptAfim(line));
+                    this.SaveToFile(new Cifragem().decrypt(line));
             }
         } catch (IOException ex) {
             Logger.getLogger(Arquivo.class.getName()).log(Level.SEVERE, null, ex);
@@ -55,7 +55,7 @@ public class Arquivo {
         FileReader fr2;
         BufferedReader reader2;
         try {
-            fr = new FileReader("C:/Users/Bruno Reinicke/Documents/Hacking/SENHAS/Usuario_A.txt");
+            fr = new FileReader("C:/Users/Bruno Reinicke/Documents/Hacking/SENHAS/Usuario_B.txt");
             reader = new BufferedReader(fr);
             fr2 = new FileReader("C:/Users/Bruno Reinicke/Documents/Hacking/SENHAS/Usuario_C.txt");
             reader2 = new BufferedReader(fr2);

@@ -24,11 +24,15 @@ public class Arquivo {
         try {
             fr = new FileReader("C:/Users/Bruno Reinicke/Documents/Hacking/SENHAS/Usuario_B.txt");
             reader = new BufferedReader(fr);
-            String line = "";                     
+            String line = "";       
+            int i = 1;
+            
             while (line != null) {
                 line = reader.readLine();
                 if (line != null) 
-                    this.SaveToFile(new Cifragem().decrypt(line));
+                    this.SaveToSQL("INSERT INTO USUARIO_C(ID, SENHA) "+
+                                   "VALUES(" + i + ", '" + line + "');");
+                i++;
             }
         } catch (IOException ex) {
             Logger.getLogger(Arquivo.class.getName()).log(Level.SEVERE, null, ex);
@@ -55,7 +59,7 @@ public class Arquivo {
         FileReader fr2;
         BufferedReader reader2;
         try {
-            fr = new FileReader("C:/Users/Bruno Reinicke/Documents/Hacking/SENHAS/Usuario_B.txt");
+            fr = new FileReader("C:/Users/Bruno Reinicke/Documents/Hacking/SENHAS/Usuario_A.txt");
             reader = new BufferedReader(fr);
             fr2 = new FileReader("C:/Users/Bruno Reinicke/Documents/Hacking/SENHAS/Usuario_C.txt");
             reader2 = new BufferedReader(fr2);
@@ -80,6 +84,20 @@ public class Arquivo {
             System.out.println("passou");
         } catch (IOException ex) {
             Logger.getLogger(Arquivo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void SaveToSQL(String line) {
+        FileWriter fw;
+        BufferedWriter writer;
+        try {
+            fw = new FileWriter("C:/Users/Bruno Reinicke/Documents/NetBeansProjects/RecursiveSQL/popular_tabela_usuario_c.sql", true);
+            writer = new BufferedWriter(fw);
+            writer.write(line);
+            writer.newLine();
+            writer.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 }

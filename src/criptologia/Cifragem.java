@@ -10,7 +10,7 @@ package criptologia;
 public class Cifragem {
     
     public String encryptAfim(String crypto, int index) {
-       return String.valueOf(crypto.charAt((12 * index + 14) % crypto.length()));
+        return String.valueOf(crypto.charAt((12 * index + 14) % crypto.length()));
     }
     
     public String decryptAfim(String caract, int index) {

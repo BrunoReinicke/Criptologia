@@ -13,8 +13,6 @@ public class Criptologia {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-       //System.out.println(new Cifragem().decrypt("°É¸¬Ô§¹ÊÒ´Ù£îÀàÅ").equals("PJ>$edj'IwBg]+C3"));
-       //System.out.println(new Cifragem().decrypt("°É¸¬Ô§¹ÊÒ´Ù£îÀàÅ"));
-       new Arquivo().compArq();
+        System.out.println(new Cifragem().encryptHill("Gkco-#VY+42"));
     }    
 }

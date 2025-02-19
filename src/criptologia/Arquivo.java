@@ -25,14 +25,15 @@ public class Arquivo {
             fr = new FileReader("C:/Users/Bruno Reinicke/Documents/Hacking/SENHAS/Usuario_B.txt");
             reader = new BufferedReader(fr);
             String line = "";       
-            int i = 1;
+           // int i = 1;
             
             while (line != null) {
                 line = reader.readLine();
                 if (line != null) 
-                    this.SaveToSQL("INSERT INTO USUARIO_C(ID, SENHA) "+
+                    this.SaveToFile(new Cifragem().decrypt(line));
+                  /*  this.SaveToSQL("INSERT INTO USUARIO_C(ID, SENHA) "+
                                    "VALUES(" + i + ", '" + line + "');");
-                i++;
+                i++;*/
             }
         } catch (IOException ex) {
             Logger.getLogger(Arquivo.class.getName()).log(Level.SEVERE, null, ex);
@@ -43,7 +44,7 @@ public class Arquivo {
         FileWriter fw;
         BufferedWriter writer;
         try {
-            fw = new FileWriter("C:/Users/Bruno Reinicke/Documents/Hacking/SENHAS/Usuario_C.txt", true);
+            fw = new FileWriter("C:/Users/Bruno Reinicke/Documents/Hacking/SENHAS/Usuario_A.txt", true);
             writer = new BufferedWriter(fw);
             writer.write(line);
             writer.newLine();

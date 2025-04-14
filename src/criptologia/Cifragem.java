@@ -16,9 +16,10 @@ public class Cifragem {
     }
     
     public String getCifra(ArrayList<ArrayList<Integer>> blocos, String crypto, String senha) {
-        int matriz[][] = {{17, 18, 19},
-                          {20, 21, 22},
-                          {23, 24, 25}}; 
+        // Determinante = 1 * (14 * 17 - 15 * 16) - 11 * (13 * 17 - 15 * 2) + 12 * (13 * 16 - 14 * 2) 
+        int matriz[][] = {{1, 11, 12},
+                          {13, 14, 15},
+                          {2, 16, 17}}; 
         int length = crypto.length();
         String cifra = "";
         int strFin = (blocos.size() * 3) + (senha.length() - (blocos.size() * 3)) - 1;
@@ -45,6 +46,40 @@ public class Cifragem {
         return cifra;
     }
     
+    public String getSenha(ArrayList<ArrayList<Integer>> blocos, String crypto, String cifra) {
+        /* Fórmula cálculo de cofatores:
+            int K[][] = {{1, 2, 3},
+                         {4, 5, 6},
+                         {7, 8, 10}};
+            Cof(K)=   
+                +(5⋅10−6⋅8) −(4⋅10−6⋅7) +(4⋅8−5⋅7)
+                −(2⋅10−3⋅8) +(1⋅10−3⋅7) −(1⋅8−2⋅7)
+                +(2⋅6−3⋅5)  −(1⋅6−3⋅4)  +(1⋅5−2⋅4)*/
+        
+       /* int matriz[][] = {{1, 11, 12},
+                          {13, 14, 15},
+                          {2, 16, 17}}; 
+        int cofatores[][] = {{-2, -191, 180},
+                             {5, -7, 6},
+                             {-3, 141, -129}};*/
+        int adj[][] = {{-2,    5,   -3},
+                       {-191, -7,  141},
+                       {180,   6, -129}};
+        int length = crypto.length();
+        String senha = "";
+  
+        for (int x = 0; x < blocos.size(); x++) {
+            ArrayList<Integer> bloco  = blocos.get(x);        
+            for (int[] adj1 : adj) {
+                int index = 0;
+                for (int y = 0; y < bloco.size(); y++) 
+                    index += bloco.get(y) * adj1[y];
+                senha += crypto.charAt(((index % length) + length) % length);
+            }    
+        }
+        return senha;
+    }
+    
     public static int calcularMDC(int a, int b) {
         while (b != 0) {
             int temp = b;
@@ -54,22 +89,32 @@ public class Cifragem {
         return a;
     }
     
-    /*
-    det(K) = a11 * (a22 * a33 - a23 * a32) - a12 * (a21 * a33 - a23 * a31) + a13 * (a21 * a32 - a22 * a31)
-        
-    int det = (17 * ((21 * 25) - (22 * 24)))
-            - (18 * ((20 * 25) - (22 * 23)))
-            - (19 * ((20 * 24) - (21 * 23)));
-    det = ((det % 89) + 89) % 89;
-
-    int inv = 0;
-    for (int x = 89; x >= 0; x--) 
-        if ((det * x) % 89 == 1) { 
-            inv = x;
-            break;
+    public static int calcInvMod(int a, int b) {
+        int inv = 1;
+        int resto = 0;
+        while (resto != 1) {
+            resto = (a * inv) % b;
+            inv++;
         }
-    System.out.println(new Cifragem().calcularMDC(57, 25));
-    */
+        return (inv - 1);
+    }
+    
+    public static int restoDivMod(int a, int b) {
+        int resto = 0;
+        int mult = 1;
+        if (a > 0) {
+            while ((mult * b) < a) {
+                resto = a - (mult * b);
+                mult++;
+            }
+        } else {
+            while ((a + (b * mult)) <= 0) 
+                mult++;
+            resto = mult;
+        }
+        return resto;
+    }
+
     public String encryptHill(String senha) {
         senha = this.encrypt(senha);
         String crypto = "Üúùø÷öõôóòñðïîíìëêéèçæåäãâáàßÞÝÛÚÙØ×ÖÕÔÓÒÑÐÏÎÍÌËÊÉÈÇÆÅÄÃÂÁÀ¿¾½¼»º¹¸·¶µ´³²±°¯®­¬«ª©¨§¦¥¤£¡";
@@ -89,6 +134,25 @@ public class Cifragem {
             count++;
         }
         return this.getCifra(blocos, crypto, senha);
+    }
+    
+    public String decryptHill(String cifra) {         
+        String crypto = "Üúùø÷öõôóòñðïîíìëêéèçæåäãâáàßÞÝÛÚÙØ×ÖÕÔÓÒÑÐÏÎÍÌËÊÉÈÇÆÅÄÃÂÁÀ¿¾½¼»º¹¸·¶µ´³²±°¯®­¬«ª©¨§¦¥¤£¡";
+        ArrayList<Integer> bloco = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> blocos = new ArrayList<>();
+        int length = crypto.length();
+        int count  = 1;
+        
+        for (int i = 0; i < cifra.length(); i++) {
+            bloco.add(crypto.indexOf(cifra.charAt(i)));
+            if (count == 3) {
+                blocos.add(bloco);
+                bloco = new ArrayList<>();
+                count = 0;
+            }
+            count++;
+        }
+        return this.decrypt(this.getSenha(blocos, crypto, cifra));
     }
     
     private String decryptAfim(String caract, int index) {

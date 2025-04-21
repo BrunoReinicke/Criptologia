@@ -16,13 +16,13 @@ public class Cifragem {
     }
     
     public String getCifra(ArrayList<ArrayList<Integer>> blocos, String crypto, String senha) {
-        // Determinante = 1 * (14 * 17 - 15 * 16) - 11 * (13 * 17 - 15 * 2) + 12 * (13 * 16 - 14 * 2) 
-        int matriz[][] = {{1, 11, 12},
+        // Determinante = 18 * (14 * 17 - 15 * 16) - 11 * (13 * 17 - 15 * 2) + 12 * (13 * 16 - 14 * 2) 
+        int matriz[][] = {{18, 11, 12},
                           {13, 14, 15},
                           {2, 16, 17}}; 
         int length = crypto.length();
         String cifra = "";
-        int strFin = (blocos.size() * 3) + (senha.length() - (blocos.size() * 3)) - 1;
+        int strFin = (blocos.size() * 3);
         
         if (blocos.size() * 3 < senha.length()) {
            ArrayList<Integer> bloco = new ArrayList<>();
@@ -30,7 +30,7 @@ public class Cifragem {
                 bloco.add(crypto.indexOf(senha.charAt(z)));
             if (bloco.size() < 3) 
                 while (bloco.size() < 3)
-                    bloco.add(26);
+                    bloco.add(89);
             blocos.add(bloco);           
         }
         
@@ -39,7 +39,7 @@ public class Cifragem {
             for (int[] matriz1 : matriz) {
                 int index = 0;
                 for (int y = 0; y < bloco.size(); y++) 
-                    index += bloco.get(y) * matriz1[y];
+                    index += bloco.get(y) * matriz1[y];     
                 cifra += crypto.charAt(((index % length) + length) % length);
             }    
         }
@@ -59,28 +59,77 @@ public class Cifragem {
        /* int matriz[][] = {{1, 11, 12},
                           {13, 14, 15},
                           {2, 16, 17}}; 
+        
         int cofatores[][] = {{-2, -191, 180},
                              {5, -7, 6},
-                             {-3, 141, -129}};*/
+                             {-3, 141, -129}};
+        
         int adj[][] = {{-2,    5,   -3},
                        {-191, -7,  141},
-                       {180,   6, -129}};
+                       {180,   6, -129}};*/
+       
+        int inversa[][] = {
+            {39, 36, 14},
+            {31,  3, 54},
+            {50, 61, 68}
+        };
+
         int length = crypto.length();
-        String senha = "";
-  
-        for (int x = 0; x < blocos.size(); x++) {
-            ArrayList<Integer> bloco  = blocos.get(x);        
-            for (int[] adj1 : adj) {
-                int index = 0;
-                for (int y = 0; y < bloco.size(); y++) 
-                    index += bloco.get(y) * adj1[y];
-                senha += crypto.charAt(((index % length) + length) % length);
-            }    
+        StringBuilder senha = new StringBuilder();
+
+        for (ArrayList<Integer> bloco : blocos) {
+            // Calculamos os três caracteres decifrados para cada bloco
+            int[] decifrado = new int[3];
+
+            for (int i = 0; i < 3; i++) {
+                decifrado[i] = 0;
+                for (int j = 0; j < 3; j++) {
+                    decifrado[i] += inversa[i][j] * bloco.get(j);
+                }
+                // Ajuste modular definitivo
+                decifrado[i] = ((decifrado[i] % 89) + 89) % 89;
+
+                // Garantia de índice válido
+                if (decifrado[i] >= length) {
+                    decifrado[i] = decifrado[i] % length;
+                }
+                senha.append(crypto.charAt(decifrado[i]));
+            }
         }
-        return senha;
+        return senha.toString();
     }
     
-    public static int calcularMDC(int a, int b) {
+    public static int invModular(int a, int mod) {
+        int inv = 0;
+        int mult = 0;
+        while ((a * mult) - (((a * mult) / mod) * mod) != 1)
+            mult++;
+        return mult;
+    }
+
+    public static int restoDivMod(int a, int b, int mod) {
+        int mult = 1;
+        int resto = 0;
+        if (a < 0) {
+            int invDet = ((a * b) - mod) * -1;
+            while ((((invDet - (mult * mod)) * -1) + mod) <= mod) {
+                resto = ((invDet - (mult * mod)) * -1) + mod;
+                mult++;
+            }
+        } else {
+            if ((a * b) <= mod)
+                resto = (a * b) - mod;
+            else {
+                resto = a * b;
+                resto = resto - ((resto / mod) * mod);
+            }    
+        } return resto;
+    }
+    
+    // Greatest Common Divisor = Máximo Divisor Comum
+    public static int getGcd(int a, int b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
         while (b != 0) {
             int temp = b;
             b = a % b;
@@ -88,36 +137,10 @@ public class Cifragem {
         }
         return a;
     }
-    
-    public static int calcInvMod(int a, int b) {
-        int inv = 1;
-        int resto = 0;
-        while (resto != 1) {
-            resto = (a * inv) % b;
-            inv++;
-        }
-        return (inv - 1);
-    }
-    
-    public static int restoDivMod(int a, int b) {
-        int resto = 0;
-        int mult = 1;
-        if (a > 0) {
-            while ((mult * b) < a) {
-                resto = a - (mult * b);
-                mult++;
-            }
-        } else {
-            while ((a + (b * mult)) <= 0) 
-                mult++;
-            resto = mult;
-        }
-        return resto;
-    }
 
     public String encryptHill(String senha) {
         senha = this.encrypt(senha);
-        String crypto = "Üúùø÷öõôóòñðïîíìëêéèçæåäãâáàßÞÝÛÚÙØ×ÖÕÔÓÒÑÐÏÎÍÌËÊÉÈÇÆÅÄÃÂÁÀ¿¾½¼»º¹¸·¶µ´³²±°¯®­¬«ª©¨§¦¥¤£¡";
+        String crypto = "Üúùø÷öõôóòñðïîíìëêéèçæåäãâáàßÝÛÚÙØ×ÖÕÔÓÒÑÐÏÎÍÌËÊÉÈÇÆÅÄÃÂÁÀ¿¾½¼»º¹¸·¶µ´³²±°¯®Д¬«ª©¨§¦¥¤£¡ГБ"; 
         String cifra = "";
         ArrayList<Integer> bloco = new ArrayList<>();
         ArrayList<ArrayList<Integer>> blocos = new ArrayList<>();
@@ -137,7 +160,7 @@ public class Cifragem {
     }
     
     public String decryptHill(String cifra) {         
-        String crypto = "Üúùø÷öõôóòñðïîíìëêéèçæåäãâáàßÞÝÛÚÙØ×ÖÕÔÓÒÑÐÏÎÍÌËÊÉÈÇÆÅÄÃÂÁÀ¿¾½¼»º¹¸·¶µ´³²±°¯®­¬«ª©¨§¦¥¤£¡";
+        String crypto = "Üúùø÷öõôóòñðïîíìëêéèçæåäãâáàßÝÛÚÙØ×ÖÕÔÓÒÑÐÏÎÍÌËÊÉÈÇÆÅÄÃÂÁÀ¿¾½¼»º¹¸·¶µ´³²±°¯®Д¬«ª©¨§¦¥¤£¡ГБ"; 
         ArrayList<Integer> bloco = new ArrayList<>();
         ArrayList<ArrayList<Integer>> blocos = new ArrayList<>();
         int length = crypto.length();
@@ -166,10 +189,10 @@ public class Cifragem {
             }
         return String.valueOf(caract.charAt((inv * ((index - 14 + length) % length)) % length));
     }
-    
+
     public String encrypt(String senha) {
-        String caract = "!#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ\\";
-        String crypto = "Üúùø÷öõôóòñðïîíìëêéèçæåäãâáàßÞÝÛÚÙØ×ÖÕÔÓÒÑÐÏÎÍÌËÊÉÈÇÆÅÄÃÂÁÀ¿¾½¼»º¹¸·¶µ´³²±°¯®­¬«ª©¨§¦¥¤£¡"; 
+        String caract = "!#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ\\Б";
+        String crypto = "Üúùø÷öõôóòñðïîíìëêéèçæåäãâáàßÝÛÚÙØ×ÖÕÔÓÒÑÐÏÎÍÌËÊÉÈÇÆÅÄÃÂÁÀ¿¾½¼»º¹¸·¶µ´³²±°¯®Д¬«ª©¨§¦¥¤£¡ГБ"; 
         String cipher = "";
         
         for (int z = 0; z < senha.length(); z++) 
@@ -185,8 +208,8 @@ public class Cifragem {
     }
     
     public String decrypt(String cipher) {
-        String caract = "!#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ\\";
-        String crypto = "Üúùø÷öõôóòñðïîíìëêéèçæåäãâáàßÞÝÛÚÙØ×ÖÕÔÓÒÑÐÏÎÍÌËÊÉÈÇÆÅÄÃÂÁÀ¿¾½¼»º¹¸·¶µ´³²±°¯®­¬«ª©¨§¦¥¤£¡";
+        String caract = "!#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ\\Б";
+        String crypto = "Üúùø÷öõôóòñðïîíìëêéèçæåäãâáàßÝÛÚÙØ×ÖÕÔÓÒÑÐÏÎÍÌËÊÉÈÇÆÅÄÃÂÁÀ¿¾½¼»º¹¸·¶µ´³²±°¯®Д¬«ª©¨§¦¥¤£¡ГБ"; 
         String senha  = "";
  
         for (int z = 0; z < cipher.length(); z++) 

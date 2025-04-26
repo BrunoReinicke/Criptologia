@@ -56,43 +56,35 @@ public class Cifragem {
                 −(2⋅10−3⋅8) +(1⋅10−3⋅7) −(1⋅8−2⋅7)
                 +(2⋅6−3⋅5)  −(1⋅6−3⋅4)  +(1⋅5−2⋅4)*/
         
-       /* int matriz[][] = {{1, 11, 12},
+       /* int matriz[][] = {{18, 11, 12},
                           {13, 14, 15},
-                          {2, 16, 17}}; 
+                          {2, 16, 17}}; */ 
         
         int cofatores[][] = {{-2, -191, 180},
-                             {5, -7, 6},
-                             {-3, 141, -129}};
+                             { 5,  282, -266},
+                             {-3, -114, 109}};
         
         int adj[][] = {{-2,    5,   -3},
-                       {-191, -7,  141},
-                       {180,   6, -129}};*/
+                       {-191,  282, -144},
+                       { 180, -266,  109}};
        
         int inversa[][] = {
-            {39, 36, 14},
-            {31,  3, 54},
-            {50, 61, 68}
+            {86, 55, 39},
+            {23, 24, 42},
+            {0,  8,  83}
         };
-
+        
         int length = crypto.length();
         StringBuilder senha = new StringBuilder();
 
         for (ArrayList<Integer> bloco : blocos) {
-            // Calculamos os três caracteres decifrados para cada bloco
-            int[] decifrado = new int[3];
-
+           int[] decifrado = new int[3];
             for (int i = 0; i < 3; i++) {
                 decifrado[i] = 0;
                 for (int j = 0; j < 3; j++) {
                     decifrado[i] += inversa[i][j] * bloco.get(j);
                 }
-                // Ajuste modular definitivo
-                decifrado[i] = ((decifrado[i] % 89) + 89) % 89;
-
-                // Garantia de índice válido
-                if (decifrado[i] >= length) {
-                    decifrado[i] = decifrado[i] % length;
-                }
+                decifrado[i] = ((decifrado[i] % length) + length) % length;
                 senha.append(crypto.charAt(decifrado[i]));
             }
         }
@@ -138,8 +130,16 @@ public class Cifragem {
         return a;
     }
 
+    public static int getMatrizInv(int num, int invMod, int mod) {    
+        if (num < 0)
+            return mod + (num * invMod) % mod;
+        else
+            return (num * invMod) % mod;
+    }
+    
     public String encryptHill(String senha) {
         senha = this.encrypt(senha);
+        System.out.println(senha);
         String crypto = "Üúùø÷öõôóòñðïîíìëêéèçæåäãâáàßÝÛÚÙØ×ÖÕÔÓÒÑÐÏÎÍÌËÊÉÈÇÆÅÄÃÂÁÀ¿¾½¼»º¹¸·¶µ´³²±°¯®Д¬«ª©¨§¦¥¤£¡ГБ"; 
         String cifra = "";
         ArrayList<Integer> bloco = new ArrayList<>();
@@ -178,7 +178,7 @@ public class Cifragem {
         return this.decrypt(this.getSenha(blocos, crypto, cifra));
     }
     
-    private String decryptAfim(String caract, int index) {
+    public String decryptAfim(String caract, int index) {
         int inv = 0;
         int length = caract.length();
         

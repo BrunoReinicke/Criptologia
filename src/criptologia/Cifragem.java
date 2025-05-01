@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Cifragem {
     
     public String encryptAfim(String crypto, int index) {
-        return String.valueOf(crypto.charAt((12 * index + 14) % crypto.length()));
+        return String.valueOf(crypto.charAt((17 * index + 19) % crypto.length()));
     }
     
     public String getCifra(ArrayList<ArrayList<Integer>> blocos, String crypto, String senha) {
@@ -88,7 +88,7 @@ public class Cifragem {
                 senha.append(crypto.charAt(decifrado[i]));
             }
         }
-        return senha.toString();
+        return senha.toString().replaceAll("Б", "");
     }
     
     public static int invModular(int a, int mod) {
@@ -139,7 +139,6 @@ public class Cifragem {
     
     public String encryptHill(String senha) {
         senha = this.encrypt(senha);
-        System.out.println(senha);
         String crypto = "Üúùø÷öõôóòñðïîíìëêéèçæåäãâáàßÝÛÚÙØ×ÖÕÔÓÒÑÐÏÎÍÌËÊÉÈÇÆÅÄÃÂÁÀ¿¾½¼»º¹¸·¶µ´³²±°¯®Д¬«ª©¨§¦¥¤£¡ГБ"; 
         String cifra = "";
         ArrayList<Integer> bloco = new ArrayList<>();
@@ -183,11 +182,11 @@ public class Cifragem {
         int length = caract.length();
         
         for (int x = length; x >= 0; x--) 
-            if ((12 * x) % length == 1) { 
+            if ((17 * x) % length == 1) { 
                 inv = x;
                 break;
             }
-        return String.valueOf(caract.charAt((inv * ((index - 14 + length) % length)) % length));
+        return String.valueOf(caract.charAt((inv * ((index - 19 + length) % length)) % length));
     }
 
     public String encrypt(String senha) {

@@ -46,6 +46,212 @@ public class Cifragem {
         return cifra;
     }
     
+    public String getCifraDinamica(ArrayList<ArrayList<Integer>> blocos, String crypto, String senha) {
+        // Determinante = 18 * (14 * 17 - 15 * 16) - 11 * (13 * 17 - 15 * 2) + 12 * (13 * 16 - 14 * 2) 
+        int matriz[][] = {{18, 11, 12},
+                          {13, 14, 15},
+                          {2, 16, 17}}; 
+        int reserva[][] = {{19, 12, 13},
+                           {14, 15, 16},
+                           {3, 17, 18}}; 
+        int permuta[][] = {{0, 0, 0},
+                           {0, 0, 0},
+                           {0, 0, 0}}; 
+        int auxiliar[][] = {{0, 0, 0},
+                            {0, 0, 0},
+                            {0, 0, 0}};  
+        int anter[][] = {{0, 0, 0},
+                         {0, 0, 0},
+                         {0, 0, 0}}; 
+        int length = crypto.length();
+        String cifra = "";
+        int strFin = (blocos.size() * 3);
+        boolean permutou = false;
+        int inv = 47;
+        
+        if (blocos.size() * 3 < senha.length()) {
+           ArrayList<Integer> bloco = new ArrayList<>();
+            for (int z = strFin; z < senha.length(); z++) 
+                bloco.add(crypto.indexOf(senha.charAt(z)));
+            if (bloco.size() < 3) 
+                while (bloco.size() < 3)
+                    bloco.add(89);
+            blocos.add(bloco);           
+        }
+        
+        int coprimo = 1;
+        for (int x = 0; x < blocos.size(); x++) {
+            ArrayList<Integer> bloco  = blocos.get(x);             
+            if (!permutou) {
+                auxiliar[0][0] = matriz[0][0] * coprimo;
+                auxiliar[0][1] = matriz[0][1] * coprimo;
+                auxiliar[0][2] = matriz[0][2] * coprimo;
+                auxiliar[1][0] = matriz[1][0] * coprimo;
+                auxiliar[1][1] = matriz[1][1] * coprimo;
+                auxiliar[1][2] = matriz[1][2] * coprimo;
+                auxiliar[2][0] = matriz[2][0] * coprimo;
+                auxiliar[2][1] = matriz[2][1] * coprimo;
+                auxiliar[2][2] = matriz[2][2] * coprimo;
+            }      
+            for (int[] matriz1 : auxiliar) {
+                int index = 0;
+                for (int y = 0; y < bloco.size(); y++) 
+                    index += (bloco.get(y) * matriz1[y]);     
+                cifra += crypto.charAt(((index % length) + length) % length);
+            }    
+            anter[0][0] = matriz[0][0] * coprimo;
+            anter[0][1] = matriz[0][1] * coprimo;
+            anter[0][2] = matriz[0][2] * coprimo;
+            anter[1][0] = matriz[1][0] * coprimo;
+            anter[1][1] = matriz[1][1] * coprimo;
+            anter[1][2] = matriz[1][2] * coprimo;
+            anter[2][0] = matriz[2][0] * coprimo;
+            anter[2][1] = matriz[2][1] * coprimo;
+            anter[2][2] = matriz[2][2] * coprimo;
+                
+            if (coprimo < this.getMaxComprimo(length))
+               coprimo = this.getComprimo(coprimo, length);  
+            else
+               coprimo = 1; 
+                
+            auxiliar[0][0] = matriz[0][0] * coprimo;
+            auxiliar[0][1] = matriz[0][1] * coprimo;
+            auxiliar[0][2] = matriz[0][2] * coprimo;
+            auxiliar[1][0] = matriz[1][0] * coprimo;
+            auxiliar[1][1] = matriz[1][1] * coprimo;
+            auxiliar[1][2] = matriz[1][2] * coprimo;
+            auxiliar[2][0] = matriz[2][0] * coprimo;
+            auxiliar[2][1] = matriz[2][1] * coprimo;
+            auxiliar[2][2] = matriz[2][2] * coprimo;
+                
+            while ((getGcd(this.getDeterminante(auxiliar),length) != 1) && !permutou) {
+                if (coprimo == this.getMaxComprimo(length)) {
+                    if (getGcd(this.getDeterminante(anter),length) == 1) {
+                        permuta[0][0] = anter[1][0];
+                        permuta[0][1] = anter[1][1];
+                        permuta[0][2] = anter[1][2];
+                        permuta[1][0] = anter[2][0];
+                        permuta[1][1] = anter[2][1];
+                        permuta[1][2] = anter[2][2];
+                        permuta[2][0] = anter[0][0];
+                        permuta[2][1] = anter[0][1];
+                        permuta[2][2] = anter[0][2];
+                        auxiliar = permuta;
+                        permutou = true;
+                        coprimo = 1;
+                    }
+                } else {
+                    coprimo = this.getComprimo(coprimo, length);
+                    auxiliar[0][0] = matriz[0][0] * coprimo;
+                    auxiliar[0][1] = matriz[0][1] * coprimo;
+                    auxiliar[0][2] = matriz[0][2] * coprimo;
+                    auxiliar[1][0] = matriz[1][0] * coprimo;
+                    auxiliar[1][1] = matriz[1][1] * coprimo;
+                    auxiliar[1][2] = matriz[1][2] * coprimo;
+                    auxiliar[2][0] = matriz[2][0] * coprimo;
+                    auxiliar[2][1] = matriz[2][1] * coprimo;
+                    auxiliar[2][2] = matriz[2][2] * coprimo;
+                }
+            }
+        }
+        return cifra;
+    }
+    
+    private int getComprimo(int coprimo, int length) {
+        for (int i = (coprimo + 1); i < length; i++) {
+            if (getGcd(i,length) == 1) {
+                coprimo = i;
+                break;
+            }
+            if (i == length) {
+                if (coprimo > 1)
+                    getComprimo(coprimo, length);
+                else {
+                    coprimo = 1;
+                    break;
+                }   
+            }
+        }
+        return coprimo;
+    }
+    
+    private int getMaxComprimo(int length) {
+        int coprimo = 1;
+        for (int i = 1; i < length; i++)
+            if (getGcd(i, length) == 1)
+                coprimo = i;
+        return coprimo;
+    }
+    
+    private boolean matrInvertivel(int matriz[][], int length) {         
+        return getGcd((matriz[0][0] * (matriz[1][1] * matriz[2][2] - matriz[1][2] * matriz[2][1]) 
+                     - matriz[0][1] * (matriz[1][0] * matriz[2][2] - matriz[1][2] * matriz[2][0]) 
+                     + matriz[0][2] * (matriz[1][1] * matriz[2][1] - matriz[1][1] * matriz[2][0]))
+                , length) == 1;
+    }
+    
+    private int getDeterminante(int matriz[][]) {
+        return matriz[0][0] * (matriz[1][1] * matriz[2][2] - matriz[1][2] * matriz[2][1]) 
+             - matriz[0][1] * (matriz[1][0] * matriz[2][2] - matriz[1][2] * matriz[2][0]) 
+             + matriz[0][2] * (matriz[1][1] * matriz[2][1] - matriz[1][1] * matriz[2][0]);
+    }
+    
+    private int[][] getMatrCofatores(int matriz[][]) {
+        int cofatores[][] = {{0, 0, 0},
+                             {0, 0, 0},
+                             {0, 0, 0}};
+        
+        cofatores[0][0] = (matriz[1][1] * matriz[2][2] - matriz[1][2] * matriz[2][1]);
+        cofatores[0][1] = (matriz[1][0] * matriz[2][2] - matriz[1][2] * matriz[2][0]) * -1;
+        cofatores[0][2] = (matriz[1][0] * matriz[2][1] - matriz[1][1] * matriz[2][0]);
+        
+        cofatores[1][0] = (matriz[0][1] * matriz[2][2] - matriz[0][2] * matriz[2][1]) * -1;
+        cofatores[1][1] = (matriz[0][0] * matriz[2][2] - matriz[0][2] * matriz[2][0]);
+        cofatores[1][2] = (matriz[0][0] * matriz[2][1] - matriz[0][1] * matriz[2][0]) * -1;
+        
+        cofatores[2][0] = (matriz[0][1] * matriz[1][2] - matriz[0][2] * matriz[1][1]);
+        cofatores[2][1] = (matriz[0][0] * matriz[1][2] - matriz[0][2] * matriz[1][0]) * -1;
+        cofatores[2][2] = (matriz[0][0] * matriz[1][1] - matriz[0][1] * matriz[1][0]);
+        
+        return cofatores;
+    }
+    
+    private int[][] getMatrAdjunta(int cofatores[][]) {
+        int adjunta[][] = {{0, 0, 0},
+                           {0, 0, 0},
+                           {0, 0, 0}};
+        adjunta[0][0] = cofatores[0][0];
+        adjunta[0][1] = cofatores[1][0];
+        adjunta[0][2] = cofatores[2][0];   
+        adjunta[1][0] = cofatores[0][1];
+        adjunta[1][1] = cofatores[1][1];
+        adjunta[1][2] = cofatores[2][1];    
+        adjunta[2][0] = cofatores[0][2];
+        adjunta[2][1] = cofatores[1][2];
+        adjunta[2][2] = cofatores[2][2];
+        return adjunta;
+    }
+    
+    private int[][] getMatrInversa(int adjunta[][], int length, int inv) {
+        int inversa[][] = {{0, 0, 0},
+                           {0, 0, 0},
+                           {0, 0, 0}};
+        
+        inversa[0][0] = getMatrInvAux(adjunta[0][0], inv, length);
+        inversa[0][1] = getMatrInvAux(adjunta[0][1], inv, length);
+        inversa[0][2] = getMatrInvAux(adjunta[0][2], inv, length); 
+        
+        inversa[1][0] = getMatrInvAux(adjunta[1][0], inv, length); 
+        inversa[1][1] = getMatrInvAux(adjunta[1][1], inv, length); 
+        inversa[1][2] = getMatrInvAux(adjunta[1][2], inv, length);     
+        
+        inversa[2][0] = getMatrInvAux(adjunta[2][0], inv, length); 
+        inversa[2][1] = getMatrInvAux(adjunta[2][1], inv, length); 
+        inversa[2][2] = getMatrInvAux(adjunta[2][2], inv, length); 
+        
+        return inversa;
+    }
+    
     public String getSenha(ArrayList<ArrayList<Integer>> blocos, String crypto, String cifra) {
         /* Fórmula cálculo de cofatores:
             int K[][] = {{1, 2, 3},
@@ -91,6 +297,74 @@ public class Cifragem {
         return senha.toString().replaceAll("Б", "");
     }
     
+    public String getSenhaDinamica(ArrayList<ArrayList<Integer>> blocos, String crypto, String cifra) {        
+        int matriz[][] = {{18, 11, 12},
+                          {13, 14, 15},
+                          {2, 16, 17}}; 
+        int permuta[][] = {{0, 0, 0},
+                           {0, 0, 0},
+                           {0, 0, 0}}; 
+        int auxiliar[][] = {{0, 0, 0},
+                           {0, 0, 0},
+                           {0, 0, 0}}; 
+        int length = crypto.length();
+        int inv = 47;
+        
+        int cofatores[][] = this.getMatrCofatores(matriz);
+        int adjunta[][] = this.getMatrAdjunta(cofatores);
+        int inversa[][] = this.getMatrInversa(adjunta, length, inv);
+        
+        StringBuilder senha = new StringBuilder();
+        int coprimo = 1;
+        boolean permutou = false;
+        
+        for (ArrayList<Integer> bloco : blocos) {
+            int[] decifrado = new int[3];
+            if (!permutou) {
+                auxiliar[0][0] = matriz[0][0] * coprimo;
+                auxiliar[0][1] = matriz[0][1] * coprimo;
+                auxiliar[0][2] = matriz[0][2] * coprimo;
+                auxiliar[1][0] = matriz[1][0] * coprimo;
+                auxiliar[1][1] = matriz[1][1] * coprimo;
+                auxiliar[1][2] = matriz[1][2] * coprimo;
+                auxiliar[2][0] = matriz[2][0] * coprimo;
+                auxiliar[2][1] = matriz[2][1] * coprimo;
+                auxiliar[2][2] = matriz[2][2] * coprimo;
+                cofatores = this.getMatrCofatores(matriz);
+                adjunta = this.getMatrAdjunta(cofatores);
+                inversa = this.getMatrInversa(adjunta, length, inv);
+            }           
+            for (int i = 0; i < 3; i++) {
+                decifrado[i] = 0;
+                for (int j = 0; j < 3; j++) {
+                    decifrado[i] += (auxiliar[i][j] * bloco.get(j));
+                }
+                decifrado[i] = ((decifrado[i] % length) + length) % length;
+                senha.append(crypto.charAt(decifrado[i]));
+            }
+            if (permutou) {
+                permutou = false;
+                auxiliar = inversa;
+                coprimo = 1;
+            }
+            coprimo = this.getComprimo(coprimo, length);
+            if (!this.matrInvertivel(auxiliar, length) && (coprimo == this.getMaxComprimo(length))) {
+                permuta[0][0] = auxiliar[1][0];
+                permuta[0][1] = auxiliar[1][1];
+                permuta[0][2] = auxiliar[1][2];
+                permuta[1][0] = auxiliar[2][0];
+                permuta[1][1] = auxiliar[2][1];
+                permuta[1][2] = auxiliar[2][2];
+                permuta[2][0] = auxiliar[0][0];
+                permuta[2][1] = auxiliar[0][1];
+                permuta[2][2] = auxiliar[0][2];
+                auxiliar = permuta;
+                coprimo = 1;
+            }
+        }
+        return senha.toString().replaceAll("Б", "");
+    }
+    
     public static int invModular(int a, int mod) {
         int inv = 0;
         int mult = 0;
@@ -130,7 +404,7 @@ public class Cifragem {
         return a;
     }
 
-    public static int getMatrizInv(int num, int invMod, int mod) {    
+    public static int getMatrInvAux(int num, int invMod, int mod) {    
         if (num < 0)
             return mod + (num * invMod) % mod;
         else
@@ -155,7 +429,8 @@ public class Cifragem {
             }
             count++;
         }
-        return this.getCifra(blocos, crypto, senha);
+       // return this.getCifra(blocos, crypto, senha);
+        return this.getCifraDinamica(blocos, crypto, senha);
     }
     
     public String decryptHill(String cifra) {         
@@ -174,7 +449,7 @@ public class Cifragem {
             }
             count++;
         }
-        return this.decrypt(this.getSenha(blocos, crypto, cifra));
+        return this.decrypt(this.getSenhaDinamica(blocos, crypto, cifra));
     }
     
     public String decryptAfim(String caract, int index) {

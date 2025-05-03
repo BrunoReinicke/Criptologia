@@ -13,7 +13,7 @@ public class Criptologia {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.out.println(new Cifragem().encryptHill("hel"));
+        /*System.out.println(new Cifragem().encryptHill("hel"));
         System.out.println(new Cifragem().decryptHill("³·Ö"));
         
         System.out.println(new Cifragem().encryptHill("hello"));
@@ -25,6 +25,8 @@ public class Criptologia {
         System.out.println(new Cifragem().encryptHill("PJ>$edj''IwBg]+C3"));
         System.out.println(new Cifragem().decryptHill("®äÚâÒÆ×ÜГ®ÙïÉÀÓÀ²ê"));
         
-        System.out.println("PJ>$edj''IwBg]+C3".equalsIgnoreCase(new Cifragem().decryptHill("®äÚâÒÆ×ÜГ®ÙïÉÀÓÀ²ê")));
+        System.out.println("PJ>$edj''IwBg]+C3".equalsIgnoreCase(new Cifragem().decryptHill("®äÚâÒÆ×ÜГ®ÙïÉÀÓÀ²ê")));*/
+        System.out.println(new Cifragem().encryptHill("h"));
+        //System.out.println(new Cifragem().decryptHill("·Ô¶"));
     }    
 }

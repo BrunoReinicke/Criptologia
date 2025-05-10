@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Cifragem {
     
     public String encryptAfim(String crypto, int index) {
-        return String.valueOf(crypto.charAt((17 * index + 19) % crypto.length()));
+        return String.valueOf(crypto.charAt((18 * index + 20) % (crypto.length() - 1)));
     }
 
     public String getCifraDinamica(ArrayList<ArrayList<Integer>> blocos, String crypto, String senha) {
@@ -160,9 +160,7 @@ public class Cifragem {
     }
     
     private int[][] getMatrCofatores(int matriz[][]) {
-        int cofatores[][] = {{0, 0, 0},
-                             {0, 0, 0},
-                             {0, 0, 0}};
+        int cofatores[][] = new int[3][3];
         
         cofatores[0][0] = (matriz[1][1] * matriz[2][2] - matriz[1][2] * matriz[2][1]);
         cofatores[0][1] = (matriz[1][0] * matriz[2][2] - matriz[1][2] * matriz[2][0]) * -1;
@@ -180,9 +178,7 @@ public class Cifragem {
     }
     
     private int[][] getMatrAdjunta(int cofatores[][]) {
-        int adjunta[][] = {{0, 0, 0},
-                           {0, 0, 0},
-                           {0, 0, 0}};
+        int adjunta[][] = new int[3][3];
         adjunta[0][0] = cofatores[0][0];
         adjunta[0][1] = cofatores[1][0];
         adjunta[0][2] = cofatores[2][0];   
@@ -196,9 +192,7 @@ public class Cifragem {
     }
     
     private int[][] getMatrInversa(int adjunta[][], int length, int inv) {
-        int inversa[][] = {{0, 0, 0},
-                           {0, 0, 0},
-                           {0, 0, 0}};
+        int inversa[][] = new int[3][3];
         
         inversa[0][0] = getMatrInvAux(adjunta[0][0], inv, length);
         inversa[0][1] = getMatrInvAux(adjunta[0][1], inv, length);
@@ -386,14 +380,14 @@ public class Cifragem {
     
     public String decryptAfim(String caract, int index) {
         int inv = 0;
-        int length = caract.length();
+        int length = caract.length() - 1;
         
         for (int x = length; x >= 0; x--) 
-            if ((17 * x) % length == 1) { 
+            if ((18 * x) % length == 1) { 
                 inv = x;
                 break;
             }
-        return String.valueOf(caract.charAt((inv * ((index - 19 + length) % length)) % length));
+        return String.valueOf(caract.charAt((inv * ((index - 20 + length) % length)) % length));
     }
 
     public String encrypt(String senha) {

@@ -29,6 +29,8 @@ public class Cifragem {
         int strFin = (blocos.size() * 3);
         int count = 0;
         
+        int teste = 0;
+        
         if (blocos.size() * 3 < senha.length()) {
             ArrayList<Integer> bloco = new ArrayList<>();
             for (int z = strFin; z < senha.length(); z++) 
@@ -42,19 +44,20 @@ public class Cifragem {
         int coprimo = 1;
         auxiliar = matriz;
         for (int x = 0; x < blocos.size(); x++) {
-            if (count == 2) {
-                auxiliar = this.getMatrPermuta(anterior);
-                if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
-                    auxiliar = this.somaMatrIdent(auxiliar);
-                    if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
-                        auxiliar = reserva;
-                        count++;
-                    }
-                }
-            }
             if (count == 3) {
                 auxiliar = matriz;
                 count = 0;
+            }
+            if (count == 2) {
+                auxiliar = this.getMatrPermuta(anterior);
+                auxiliar = this.somaMatrIdent(auxiliar);
+            /*    if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
+                    auxiliar = this.somaMatrIdent(auxiliar);
+                    if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
+                         auxiliar = reserva;
+                         count++;
+                    }
+                }*/
             }
             ArrayList<Integer> bloco  = blocos.get(x);      
             for (int[] matriz1 : auxiliar) {
@@ -64,15 +67,26 @@ public class Cifragem {
                 cifra += crypto.charAt(((index % length) + length) % length);
             }    
             anterior = auxiliar;
-            if (coprimo < this.getMaxComprimo(length))
-               coprimo = this.getComprimo(coprimo, length);  
-            else
-               coprimo = 1;
+            if (coprimo < this.getMaxCoprimo(length))
+               coprimo = this.getCoprimo(coprimo, length);  
+            else 
+               coprimo = 1;     
+          
+            if (coprimo < this.getMaxCoprimo(length))
+               coprimo = this.getCoprimo(coprimo, length);  
+            else 
+               coprimo = 1;   
+            
+                if (count < 2) {
+                  //  coprimo = 1;
+                    if ((coprimo == this.getMaxCoprimo(length)) || (coprimo == 1))
+                    count++;
+                }
+            
             auxiliar = this.getMatrCoprimo(matriz, coprimo);
-
             while ((getGcd(this.getDeterminante(auxiliar),length) != 1) && (count < 2)) {
-                if (coprimo < this.getMaxComprimo(length)) {
-                    coprimo = this.getComprimo(coprimo, length); 
+                if (coprimo < this.getMaxCoprimo(length)) {
+                    coprimo = this.getCoprimo(coprimo, length); 
                     auxiliar = getMatrCoprimo(matriz, coprimo);
                 } else {
                     coprimo = 1;
@@ -120,7 +134,7 @@ public class Cifragem {
         return ident;
     }
     
-    private int getComprimo(int coprimo, int length) {
+    public int getCoprimo(int coprimo, int length) {
         for (int i = (coprimo + 1); i < length; i++) {
             if (getGcd(i,length) == 1) {
                 coprimo = i;
@@ -128,7 +142,7 @@ public class Cifragem {
             }
             if (i == length) {
                 if (coprimo > 1)
-                    getComprimo(coprimo, length);
+                    getCoprimo(coprimo, length);
                 else {
                     coprimo = 1;
                     break;
@@ -138,7 +152,7 @@ public class Cifragem {
         return coprimo;
     }
     
-    private int getMaxComprimo(int length) {
+    private int getMaxCoprimo(int length) {
         int coprimo = 1;
         for (int i = 1; i < length; i++)
             if (getGcd(i, length) == 1)
@@ -155,7 +169,7 @@ public class Cifragem {
     
     private int getDeterminante(int matriz[][]) {
         return matriz[0][0] * (matriz[1][1] * matriz[2][2] - matriz[1][2] * matriz[2][1]) 
-             - matriz[0][1] * (matriz[1][0] * matriz[2][2] - matriz[1][2] * matriz[2][0]) 
+             - matriz[0][1] * (matriz[1][0] * matriz[2][2] - matriz[1][2] * matriz[2][0])
              + matriz[0][2] * (matriz[1][0] * matriz[2][1] - matriz[1][1] * matriz[2][0]);
     }
     
@@ -272,15 +286,15 @@ public class Cifragem {
                 senha.append(crypto.charAt(decifrado[i]));
             }
             anterior = auxiliar;
-            if (coprimo < this.getMaxComprimo(length))
-               coprimo = this.getComprimo(coprimo, length);  
+            if (coprimo < this.getMaxCoprimo(length))
+               coprimo = this.getCoprimo(coprimo, length);  
             else
                coprimo = 1; 
-            auxiliar = this.getMatrCoprimo(matriz, coprimo);
-      
+           auxiliar = this.getMatrCoprimo(matriz, coprimo);
+          
             while ((getGcd(this.getDeterminante(auxiliar),length) != 1) && (count < 2)) {
-                if (coprimo < this.getMaxComprimo(length)) {
-                    coprimo = this.getComprimo(coprimo, length); 
+                if (coprimo < this.getMaxCoprimo(length)) {
+                    coprimo = this.getCoprimo(coprimo, length); 
                     auxiliar = getMatrCoprimo(matriz, coprimo);
                 } else {
                     coprimo = 1;

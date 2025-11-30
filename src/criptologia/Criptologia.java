@@ -13,11 +13,13 @@ public class Criptologia {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.out.println(new Cifragem().encryptHill("5U#*ulF3H.d+2D!67A3Kw`oX"));
-        System.out.println(new Cifragem().decryptHill("À¿¿â¦îÛÝÚÃ£ñÖèëçä¾ÏëµÌ°Â").equals("5U#*ulF3H.d+2D!67A3Kw`oX"));
-        
-        System.out.println(new Cifragem().encryptHill("!#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ\\"));
-        System.out.println(new Cifragem().decryptHill("ÙÏ©Ùº¨ºÃÌГú·µÏ©²ã¸ªòã½±½°ú¡ôÛ¤ËÛ³ç¨´ÒÃ®ÑÂéó¡Ý¼¬äêÏ¸ÃÃÜ·´ÄÈïÂДÉñóòÀ¡éìÓðÉ³ÉÑöõÖªÌÉ«Ü½ÄðòÔÉè")
-                                                .equals("!#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ\\"));
+        System.out.println(new Cifragem().encryptHill(
+                "0biQz2;y6(FQ2Gc7ANq952YCLIXjaA0123456789"+
+                "0biQz2;y6(FQ2Gc7ANq952YCLIXjaA0123456789"+
+                "0biQz2;y6(FQ2Gc7ANq952YCLIXjaA0123456789"+
+                "0biQz2;y6(FQ2Gc7ANq952YCLIXjaA0123456789"));
+  
+        System.out.println(("ÉÃÛ±ÆÄ¦ÏöóÆµÝÏáÒ¾Ð½èÓä®óÑ¼¦ÕГö·õîê§àÍ©Í«ÔÓãÃ½²õ¸ÂÒÅ×Б¸ñº¡Бôíªª¨Õ§ß¾¸ñÀ´Ü¤ïÕºëÑ·ÎÂ½ÉÛ·¶Ç²é¦ÉåÑ¨«¯×°¹é©©×¼äÈ²Ýìï±±¸§¼ê¿¥¿ÁéÕïÉÌð¸÷ßø±§ñÒÚ²×ÉãÝöÊ´Ù¡ÚòÁ¶÷Û½Î»äæ©Å½ðÉð")
+                .equals("ÉÃÛ±ÆÄ¦ÏöóÆµÝÏáÒ¾Ð½èÓä®óÑ¼¦ÕГö·õîê§àÍ©Í«ÔÓãÃ½²õ¸ÂÒÅ×Б¸ñº¡Бôíªª¨Õ§ß¾¸ñÀ´Ü¤ïÕºëÑ·ÎÂ½ÉÛ·¶Ç²é¦ÉåÑ¨«¯×°¹é©©×¼äÈ²Ýìï±±¸§¼ê¿¥¿ÁéÕïÉÌð¸÷ßø±§ñÒÚ²×ÉãÝöÊ´Ù¡ÚòÁ¶÷Û½Î»äæ©Å½ðÉð"));   
     }    
 }

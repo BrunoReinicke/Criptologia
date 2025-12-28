@@ -49,15 +49,14 @@ public class Cifragem {
                 count = 0;
             }
             if (count == 2) {
-                auxiliar = this.getMatrPermuta(anterior);
-                auxiliar = this.somaMatrIdent(auxiliar);
-            /*    if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
+                auxiliar = this.getMatrPermuta(anterior); 
+                if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
                     auxiliar = this.somaMatrIdent(auxiliar);
                     if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
-                         auxiliar = reserva;
-                         count++;
+                        auxiliar = reserva;
+                        count++;
                     }
-                }*/
+                }
             }
             ArrayList<Integer> bloco  = blocos.get(x);      
             for (int[] matriz1 : auxiliar) {
@@ -76,13 +75,7 @@ public class Cifragem {
                coprimo = this.getCoprimo(coprimo, length);  
             else 
                coprimo = 1;   
-            
-                if (count < 2) {
-                  //  coprimo = 1;
-                    if ((coprimo == this.getMaxCoprimo(length)) || (coprimo == 1))
-                    count++;
-                }
-            
+      
             auxiliar = this.getMatrCoprimo(matriz, coprimo);
             while ((getGcd(this.getDeterminante(auxiliar),length) != 1) && (count < 2)) {
                 if (coprimo < this.getMaxCoprimo(length)) {

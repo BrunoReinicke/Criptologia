@@ -29,8 +29,6 @@ public class Cifragem {
         int strFin = (blocos.size() * 3);
         int count = 0;
         
-        int teste = 0;
-        
         if (blocos.size() * 3 < senha.length()) {
             ArrayList<Integer> bloco = new ArrayList<>();
             for (int z = strFin; z < senha.length(); z++) 
@@ -70,12 +68,6 @@ public class Cifragem {
                coprimo = this.getCoprimo(coprimo, length);  
             else 
                coprimo = 1;     
-          
-            if (coprimo < this.getMaxCoprimo(length))
-               coprimo = this.getCoprimo(coprimo, length);  
-            else 
-               coprimo = 1;   
-      
             auxiliar = this.getMatrCoprimo(matriz, coprimo);
             while ((getGcd(this.getDeterminante(auxiliar),length) != 1) && (count < 2)) {
                 if (coprimo < this.getMaxCoprimo(length)) {

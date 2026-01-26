@@ -16,25 +16,40 @@ import java.util.logging.Logger;
  * @author Bruno Reinicke
  */
 public class Arquivo {
-
-    public void percorreArq() {
+    
+    public void decryptArq() {
         FileReader fr;
         BufferedReader reader;
-        
         try {
-            fr = new FileReader("C:/Users/Bruno Reinicke/Documents/Hacking/SENHAS/Usuario_B.txt");
-            reader = new BufferedReader(fr);
-            String line = "";       
-           // int i = 1;
+            fr = new FileReader("C:/Users/Bruno Reinicke/Documents/NetBeansProjects/RecursiveSQL/Crypted.txt");
+            reader = new BufferedReader(fr);        
+            String line = "";    
             
             while (line != null) {
                 line = reader.readLine();
                 if (line != null) 
-                    this.SaveToFile(new Cifragem().decrypt(line));
-                  /*  this.SaveToSQL("INSERT INTO USUARIO_C(ID, SENHA) "+
-                                   "VALUES(" + i + ", '" + line + "');");
-                i++;*/
+                    this.SaveToFile(new Cifragem().decryptHill(line));
             }
+            System.out.println("OK!");
+        } catch (IOException ex) {
+            Logger.getLogger(Arquivo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void cryptArq() {
+        FileReader fr;
+        BufferedReader reader;
+        try {
+            fr = new FileReader("C:/Users/Bruno Reinicke/Documents/NetBeansProjects/RecursiveSQL/Decrypted.txt");
+            reader = new BufferedReader(fr);       
+            String line = "";         
+            
+            while (line != null) {
+                line = reader.readLine();
+                if (line != null) 
+                   this.SaveToFile(new Cifragem().encryptHill(line));
+            }
+            System.out.println("okay");
         } catch (IOException ex) {
             Logger.getLogger(Arquivo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -44,7 +59,7 @@ public class Arquivo {
         FileWriter fw;
         BufferedWriter writer;
         try {
-            fw = new FileWriter("C:/Users/Bruno Reinicke/Documents/Hacking/SENHAS/Usuario_A.txt", true);
+            fw = new FileWriter("C:/Users/Bruno Reinicke/Documents/NetBeansProjects/RecursiveSQL/CryptedJAVA.txt", true);
             writer = new BufferedWriter(fw);
             writer.write(line);
             writer.newLine();
@@ -60,9 +75,9 @@ public class Arquivo {
         FileReader fr2;
         BufferedReader reader2;
         try {
-            fr = new FileReader("C:/Users/Bruno Reinicke/Documents/Hacking/SENHAS/Usuario_A.txt");
+            fr = new FileReader("C:/Users/Bruno Reinicke/Documents/NetBeansProjects/RecursiveSQL/Crypted.txt");
             reader = new BufferedReader(fr);
-            fr2 = new FileReader("C:/Users/Bruno Reinicke/Documents/Hacking/SENHAS/Usuario_C.txt");
+            fr2 = new FileReader("C:/Users/Bruno Reinicke/Documents/NetBeansProjects/RecursiveSQL/CryptedJAVA.txt");
             reader2 = new BufferedReader(fr2);
             
             String line = "";
@@ -85,20 +100,6 @@ public class Arquivo {
             System.out.println("passou");
         } catch (IOException ex) {
             Logger.getLogger(Arquivo.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public void SaveToSQL(String line) {
-        FileWriter fw;
-        BufferedWriter writer;
-        try {
-            fw = new FileWriter("C:/Users/Bruno Reinicke/Documents/NetBeansProjects/RecursiveSQL/popular_tabela_usuario_c.sql", true);
-            writer = new BufferedWriter(fw);
-            writer.write(line);
-            writer.newLine();
-            writer.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
     }
 }

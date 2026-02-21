@@ -240,17 +240,23 @@ public class Cifragem {
         int coprimo = 1;
         auxiliar = matriz;
         int count = 0;
+        int teste = 0;
         
         for (ArrayList<Integer> bloco : blocos) {
             if (count == 2) {
-                auxiliar = this.getMatrPermuta(anterior);
-                if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
-                    auxiliar = this.somaMatrIdent(matriz);
+                if (teste == 0) {
+                    auxiliar = this.getMatrPermuta(anterior);
                     if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
-                        auxiliar = reserva;
-                        count++;
+                        auxiliar = this.somaMatrIdent(auxiliar);
+                        if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
+                            auxiliar = reserva;
+                            count++;
+                        }
                     }
+                } else {
+                    auxiliar = this.somaMatrIdent(auxiliar); 
                 }
+                teste++;
             }
             if (count == 3) {
                 auxiliar = matriz;
@@ -270,13 +276,16 @@ public class Cifragem {
                 decifrado[i] = ((decifrado[i] % length) + length) % length;
                 senha.append(crypto.charAt(decifrado[i]));
             }
-            anterior = auxiliar;
-            if (coprimo < this.getMaxCoprimo(length))
-               coprimo = this.getCoprimo(coprimo, length);  
+            anterior = auxiliar;      
+            if (coprimo < this.getMaxCoprimo(length)) 
+               coprimo = this.getCoprimo(coprimo, length);
             else
                coprimo = 1; 
-           auxiliar = this.getMatrCoprimo(matriz, coprimo);
-          
+            auxiliar = this.getMatrCoprimo(matriz, coprimo);
+            
+            if (coprimo == 89)
+                count++;
+                
             while ((getGcd(this.getDeterminante(auxiliar),length) != 1) && (count < 2)) {
                 if (coprimo < this.getMaxCoprimo(length)) {
                     coprimo = this.getCoprimo(coprimo, length); 
@@ -332,7 +341,7 @@ public class Cifragem {
 
     public static int getMatrInvAux(int num, int invMod, int mod) {    
         if (num < 0)
-            return mod + (num * invMod) % mod;
+             return mod + (num * invMod) % mod;
         else
             return (num * invMod) % mod;
     }

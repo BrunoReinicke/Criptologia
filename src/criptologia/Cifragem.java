@@ -244,19 +244,14 @@ public class Cifragem {
         
         for (ArrayList<Integer> bloco : blocos) {
             if (count == 2) {
-                if (teste == 0) {
-                    auxiliar = this.getMatrPermuta(anterior);
+                auxiliar = this.getMatrPermuta(anterior);
+               /* if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
+                    auxiliar = this.somaMatrIdent(auxiliar);
                     if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
-                        auxiliar = this.somaMatrIdent(auxiliar);
-                        if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
-                            auxiliar = reserva;
-                            count++;
-                        }
+                        auxiliar = reserva;
+                        count++;
                     }
-                } else {
-                    auxiliar = this.somaMatrIdent(auxiliar); 
-                }
-                teste++;
+                }*/
             }
             if (count == 3) {
                 auxiliar = matriz;

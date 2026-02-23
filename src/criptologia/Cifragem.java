@@ -243,8 +243,19 @@ public class Cifragem {
         int teste = 0;
         
         for (ArrayList<Integer> bloco : blocos) {
+            if (count == 3) {
+                auxiliar = matriz;
+                count = 0;
+            }
+            
             if (count == 2) {
                 auxiliar = this.getMatrPermuta(anterior);
+                auxiliar = this.somaMatrIdent(auxiliar);
+                if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
+                    auxiliar = reserva;
+                    count++;
+                }
+                
                /* if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
                     auxiliar = this.somaMatrIdent(auxiliar);
                     if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
@@ -253,10 +264,7 @@ public class Cifragem {
                     }
                 }*/
             }
-            if (count == 3) {
-                auxiliar = matriz;
-                count = 0;
-            }
+
             cofatores = this.getMatrCofatores(auxiliar);
             adjunta = this.getMatrAdjunta(cofatores);
             int inv = invModular(this.getDeterminante(auxiliar), length);

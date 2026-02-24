@@ -240,7 +240,6 @@ public class Cifragem {
         int coprimo = 1;
         auxiliar = matriz;
         int count = 0;
-        int teste = 0;
         
         for (ArrayList<Integer> bloco : blocos) {
             if (count == 3) {
@@ -250,27 +249,20 @@ public class Cifragem {
             
             if (count == 2) {
                 auxiliar = this.getMatrPermuta(anterior);
-                auxiliar = this.somaMatrIdent(auxiliar);
                 if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
-                    auxiliar = reserva;
-                    count++;
-                }
-                
-               /* if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
                     auxiliar = this.somaMatrIdent(auxiliar);
                     if (getGcd(this.getDeterminante(auxiliar),length) != 1) {
                         auxiliar = reserva;
                         count++;
                     }
-                }*/
+                }
             }
-
             cofatores = this.getMatrCofatores(auxiliar);
             adjunta = this.getMatrAdjunta(cofatores);
             int inv = invModular(this.getDeterminante(auxiliar), length);
             inversa = this.getMatrInversa(adjunta, length, inv);
-        
-            int[] decifrado = new int[3];         
+            int[] decifrado = new int[3];      
+            
             for (int i = 0; i < 3; i++) {
                 decifrado[i] = 0;
                 for (int j = 0; j < 3; j++) {
@@ -285,10 +277,7 @@ public class Cifragem {
             else
                coprimo = 1; 
             auxiliar = this.getMatrCoprimo(matriz, coprimo);
-            
-            if (coprimo == 89)
-                count++;
-                
+
             while ((getGcd(this.getDeterminante(auxiliar),length) != 1) && (count < 2)) {
                 if (coprimo < this.getMaxCoprimo(length)) {
                     coprimo = this.getCoprimo(coprimo, length); 
